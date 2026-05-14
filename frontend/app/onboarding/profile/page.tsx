@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { saveProfileSection } from "@/app/actions";
+import { PendingButton } from "@/components/PendingButton";
 
 export default async function ProfileOnboardingPage() {
   const session = await auth();
@@ -28,10 +29,9 @@ export default async function ProfileOnboardingPage() {
           <label className="field"><span>Description</span><textarea name="description" /></label>
           <label className="field"><span>URL</span><input name="url" /></label>
           <input name="order" type="hidden" value="0" />
-          <button type="submit">Save and open dashboard</button>
+          <PendingButton pendingLabel="Saving evidence...">Save and open dashboard</PendingButton>
         </form>
       </section>
     </main>
   );
 }
-

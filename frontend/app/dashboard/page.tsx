@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { backendFetch } from "@/lib/backend";
 import type { Evaluation, ProfileSection, Source, UserProfile } from "@/lib/types";
 import { createAnalysis, publishProfile, unpublishProfile, updateProfileBasics } from "@/app/actions";
+import { PendingButton } from "@/components/PendingButton";
 
 const activityLevels = [
   0, 1, 1, 2, 3, 4, 3, 2, 1, 0, 1, 2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 3,
@@ -44,13 +45,17 @@ export default async function DashboardPage() {
 
   return (
     <main className="dashboard-stage">
-      <section className="dashboard-window ui-window">
-        <div className="ui-titlebar">
-          <div className="ui-dots"><div className="ui-dot" /><div className="ui-dot" /><div className="ui-dot" /></div>
-          <div className="ui-url"><span className="url-green">adpt.so</span>/{profile.slug}</div>
-          <div className="ui-sync-note">refresh every {refreshDays}d</div>
+      <section className="dashboard-app">
+        <div className="dashboard-topline">
+          <div>
+            <div className="sidebar-label">Live profile</div>
+            <div className="dashboard-url"><span>adpt.so</span>/{profile.slug}</div>
+          </div>
+          <div className="dashboard-topline-right">
+            <span className="status">{profile.published ? <Eye size={14} /> : <EyeOff size={14} />} {profile.published ? "Published" : "Private"}</span>
+            <span className="status">refresh every {refreshDays}d</span>
+          </div>
         </div>
-
         <div className="dashboard-body">
           <aside className="ui-sidebar dashboard-sidebar">
             <div className="sidebar-section">
@@ -107,7 +112,7 @@ export default async function DashboardPage() {
                 <label className="field"><span>Name</span><input name="name" defaultValue={profile.name ?? ""} /></label>
                 <label className="field"><span>Headline</span><input name="headline" defaultValue={profile.headline ?? ""} /></label>
                 <label className="field"><span>Profile slug</span><input name="slug" defaultValue={profile.slug} pattern="[a-z0-9-]{3,80}" /></label>
-                <button className="secondary" type="submit">Save profile</button>
+                <PendingButton className="secondary" pendingLabel="Saving profile...">Save profile</PendingButton>
               </form>
 
               <div className="dashboard-signal-panel">
@@ -130,11 +135,17 @@ export default async function DashboardPage() {
             <div className="dashboard-action-row">
               <Link className="btn-secondary" href="/dashboard/sources">Manage sources</Link>
               <Link className="btn-secondary" href="/onboarding/profile">Add section</Link>
-              <form action={createAnalysis}><button type="submit"><RefreshCcw size={16} /> Generate analysis</button></form>
+              <form action={createAnalysis}>
+                <PendingButton pendingLabel="Analyzing signal..."><RefreshCcw size={16} /> Generate analysis</PendingButton>
+              </form>
               {profile.published ? (
-                <form action={unpublishProfile}><button className="secondary" type="submit"><EyeOff size={16} /> Unpublish</button></form>
+                <form action={unpublishProfile}>
+                  <PendingButton className="secondary" pendingLabel="Unpublishing..."><EyeOff size={16} /> Unpublish</PendingButton>
+                </form>
               ) : (
-                <form action={publishProfile}><button type="submit" disabled={!canPublish}><Eye size={16} /> Publish</button></form>
+                <form action={publishProfile}>
+                  <PendingButton disabled={!canPublish} pendingLabel="Publishing..."><Eye size={16} /> Publish</PendingButton>
+                </form>
               )}
               {profile.published && <Link className="btn-secondary" href={`/u/${profile.slug}`}>Open public profile</Link>}
             </div>

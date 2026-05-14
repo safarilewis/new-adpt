@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { signOutUser } from "@/app/actions";
+import { PendingButton } from "@/components/PendingButton";
 
 export async function AppHeader() {
   const session = await auth();
@@ -18,7 +19,7 @@ export async function AppHeader() {
             <Link href="/dashboard/sources">Sources</Link>
             <Link href="/dashboard/analysis">Analysis</Link>
             <form action={signOutUser}>
-              <button className="secondary" type="submit">Sign out</button>
+              <PendingButton className="secondary" pendingLabel="Signing out...">Sign out</PendingButton>
             </form>
           </>
         ) : (

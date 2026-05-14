@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { connectGithub } from "@/app/actions";
+import { PendingButton } from "@/components/PendingButton";
 
 export default async function GithubOnboardingPage() {
   const session = await auth();
@@ -18,10 +19,9 @@ export default async function GithubOnboardingPage() {
             <input name="username" defaultValue={session.githubUsername ?? ""} required />
           </label>
           <input name="accessToken" type="hidden" value={session.githubAccessToken ?? ""} />
-          <button type="submit">Import GitHub data</button>
+          <PendingButton pendingLabel="Importing GitHub...">Import GitHub data</PendingButton>
         </form>
       </section>
     </main>
   );
 }
-

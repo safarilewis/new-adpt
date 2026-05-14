@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { createAnalysis, reviewAnalysis } from "@/app/actions";
 import { backendFetch } from "@/lib/backend";
 import type { Evaluation } from "@/lib/types";
+import { PendingButton } from "@/components/PendingButton";
 
 function ListBlock({ title, items }: { title: string; items: string[] | null }) {
   if (!items?.length) return null;
@@ -29,7 +30,7 @@ export default async function AnalysisPage() {
         <h1>Analysis</h1>
         <p className="lead">Generate evidence-backed profile copy, then review it before anything can be published.</p>
         <form action={createAnalysis}>
-          <button type="submit"><RefreshCcw size={16} /> Generate new analysis</button>
+          <PendingButton pendingLabel="Analyzing signal..."><RefreshCcw size={16} /> Generate new analysis</PendingButton>
         </form>
       </section>
 
@@ -56,7 +57,7 @@ export default async function AnalysisPage() {
           {!evaluation.reviewed && evaluation.status === "ready" && (
             <form action={reviewAnalysis}>
               <input type="hidden" name="id" value={evaluation.id} />
-              <button type="submit"><CheckCircle2 size={16} /> Mark reviewed</button>
+              <PendingButton pendingLabel="Marking reviewed..."><CheckCircle2 size={16} /> Mark reviewed</PendingButton>
             </form>
           )}
         </section>
@@ -64,4 +65,3 @@ export default async function AnalysisPage() {
     </main>
   );
 }
-

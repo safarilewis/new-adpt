@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { deleteSource } from "@/app/actions";
 import { backendFetch } from "@/lib/backend";
 import type { Source } from "@/lib/types";
+import { PendingButton } from "@/components/PendingButton";
 
 export default async function SourcesPage() {
   const session = await auth();
@@ -31,7 +32,7 @@ export default async function SourcesPage() {
             <pre className="faint">{JSON.stringify(source.summary ?? {}, null, 2)}</pre>
             <form action={deleteSource}>
               <input type="hidden" name="kind" value={source.kind} />
-              <button className="danger" type="submit"><Trash2 size={16} /> Delete source</button>
+              <PendingButton className="danger" pendingLabel="Deleting source..."><Trash2 size={16} /> Delete source</PendingButton>
             </form>
           </article>
         ))}
