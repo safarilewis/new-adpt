@@ -1,5 +1,5 @@
 from app.services.scoring import github_quality_signals, leetcode_signals, profile_signals
-from app.services.refresh_policy import FREE_TIER_REFRESH_DAYS, next_free_tier_refresh_at, assert_free_tier_refresh_allowed
+from app.services.refresh_policy import free_tier_refresh_days, next_free_tier_refresh_at, assert_free_tier_refresh_allowed
 from datetime import datetime, timedelta
 from fastapi import HTTPException
 import pytest
@@ -52,7 +52,7 @@ class Account:
 
 def test_free_tier_refresh_allows_first_or_older_than_14_days():
     assert_free_tier_refresh_allowed(None)
-    assert_free_tier_refresh_allowed(Account(datetime.utcnow() - timedelta(days=FREE_TIER_REFRESH_DAYS, minutes=1)))
+    assert_free_tier_refresh_allowed(Account(datetime.utcnow() - timedelta(days=free_tier_refresh_days(), minutes=1)))
 
 
 def test_free_tier_refresh_blocks_before_14_days():

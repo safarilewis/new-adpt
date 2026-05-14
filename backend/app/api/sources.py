@@ -9,7 +9,7 @@ from app.models import ConnectedAccount, LeetCodeSnapshot, SourceKind, User
 from app.schemas import GitHubConnectIn, LeetCodeConnectIn, SourceOut
 from app.services.github import delete_github_source, sync_github
 from app.services.leetcode import delete_leetcode_source, sync_leetcode
-from app.services.refresh_policy import FREE_TIER_REFRESH_DAYS, assert_free_tier_refresh_allowed, next_free_tier_refresh_at
+from app.services.refresh_policy import assert_free_tier_refresh_allowed, free_tier_refresh_days, next_free_tier_refresh_at
 
 router = APIRouter(prefix="/sources", tags=["sources"])
 
@@ -27,7 +27,7 @@ def list_sources(db: Session = Depends(get_db), user: User = Depends(require_use
                 last_synced_at=account.last_synced_at,
                 summary={
                     **(summary or {}),
-                    "refresh_interval_days": FREE_TIER_REFRESH_DAYS,
+                    "refresh_interval_days": free_tier_refresh_days(),
                     "next_refresh_at": (
                         next_free_tier_refresh_at(account).isoformat()
                         if next_free_tier_refresh_at(account)
@@ -58,7 +58,7 @@ async def connect_github(
         last_synced_at=account.last_synced_at,
         summary={
             **(account.raw_snapshot or {}),
-            "refresh_interval_days": FREE_TIER_REFRESH_DAYS,
+            "refresh_interval_days": free_tier_refresh_days(),
             "next_refresh_at": next_free_tier_refresh_at(account).isoformat() if next_free_tier_refresh_at(account) else None,
         },
     )
@@ -90,8 +90,8 @@ async def connect_leetcode(
             "medium_solved": snapshot.medium_solved,
             "hard_solved": snapshot.hard_solved,
             "ranking": snapshot.ranking,
-            "refresh_interval_days": FREE_TIER_REFRESH_DAYS,
-            "next_refresh_at": (snapshot.created_at + timedelta(days=FREE_TIER_REFRESH_DAYS)).isoformat(),
+            "refresh_interval_days": free_tier_refresh_days(),
+            "next_refresh_at": (snapshot.created_at + timedelta(days=free_tier_refresh_days())).isoformat(),
         },
     )
 

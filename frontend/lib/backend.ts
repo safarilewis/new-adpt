@@ -46,7 +46,7 @@ export async function backendFetch<T>(path: string, init: RequestInit = {}): Pro
   if (response.status === 204) {
     return undefined as T;
   }
-  return response.json() as Promise<T>;
+  return parseJsonResponse<T>(response, path);
 }
 
 export async function publicFetch<T>(path: string): Promise<T> {
@@ -54,5 +54,18 @@ export async function publicFetch<T>(path: string): Promise<T> {
   if (!response.ok) {
     throw new Error(`Public backend request failed with ${response.status}`);
   }
-  return response.json() as Promise<T>;
+  return parseJsonResponse<T>(response, path);
+}
+
+async function parseJsonResponse<T>(response: Response, path: string): Promise<T> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const body = await response.text();
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Backend returned non-JSON for ${path}. Check BACKEND_URL. Received ${response.status} ${contentType}: ${body.slice(0, 120)}`
+    );
+  }
+
+  return JSON.parse(body) as T;
 }

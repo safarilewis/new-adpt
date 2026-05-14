@@ -14,7 +14,16 @@ ANALYSIS_SCHEMA = {
     "additionalProperties": False,
     "properties": {
         "summary": {"type": "string"},
-        "skill_model": {"type": "object", "additionalProperties": True},
+        "skill_model": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "code_quality": {"type": "string"},
+                "delivery": {"type": "string"},
+                "algorithms": {"type": "string"},
+            },
+            "required": ["code_quality", "delivery", "algorithms"],
+        },
         "strengths": {"type": "array", "items": {"type": "string"}},
         "growth_areas": {"type": "array", "items": {"type": "string"}},
         "project_complexity_notes": {"type": "array", "items": {"type": "string"}},
@@ -153,4 +162,3 @@ def run_analysis(db: Session, user: User, evaluation: GeneratedEvaluation) -> Ge
     db.commit()
     db.refresh(evaluation)
     return evaluation
-
